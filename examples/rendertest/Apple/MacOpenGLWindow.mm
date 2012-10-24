@@ -12,10 +12,7 @@
 #include <string.h>
 
 
-extern bool pauseSimulation;
-extern bool shootObject;
-extern int m_glutScreenWidth;
-extern int m_glutScreenHeight;
+
 
 /* report GL errors, if any, to stderr */
 static void checkError(const char *functionName)
@@ -51,7 +48,7 @@ void dumpInfo(void)
 
 }
 -(void)drawRect:(NSRect)rect;
--(void) MakeContext:(NSView*) view;
+-(void) MakeContext:(int) openglVersion;
 -(void) MakeCurrent;
 -(float) GetWindowWidth;
 -(float) GetWindowHeight;
@@ -93,20 +90,20 @@ float loop;
         
         
         // Get view dimensions in pixels
-     //   NSRect backingBounds = [self convertRectToBacking:[self bounds]];
-        
-     //   GLsizei backingPixelWidth  = (GLsizei)(backingBounds.size.width),
-       // backingPixelHeight = (GLsizei)(backingBounds.size.height);
-        
-        // Set viewport
-     //   glViewport(0, 0, backingPixelWidth, backingPixelHeight);
      //   glViewport(0,0,10,10);
         if (m_resizeCallback)
         {
             (*m_resizeCallback)(width,height);
         }
+     
+		NSRect backingBounds = [self convertRectToBacking:[self bounds]];
+        GLsizei backingPixelWidth  = (GLsizei)(backingBounds.size.width),
+        backingPixelHeight = (GLsizei)(backingBounds.size.height);
         
-        //glViewport(0,0,(GLsizei)width,(GLsizei)height);
+        // Set viewport
+        glViewport(0, 0, backingPixelWidth, backingPixelHeight);
+		
+     //   glViewport(0,0,(GLsizei)width,(GLsizei)height);
 
 	}
 	
@@ -122,22 +119,43 @@ float loop;
 	loop = loop + 0.1;
 }
 
--(void) MakeContext
+-(void) MakeContext :(int) openglVersion
 {
     //	NSWindow *w;
 	NSOpenGLPixelFormat *fmt;
     
-	NSOpenGLPixelFormatAttribute attrs[] =
-	{
-		NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
-		NSOpenGLPFADoubleBuffer,
-		NSOpenGLPFADepthSize, 32,
-		(NSOpenGLPixelFormatAttribute)0
-	};
-        
-	// Init GL context
-	fmt = [[NSOpenGLPixelFormat alloc] initWithAttributes: (NSOpenGLPixelFormatAttribute*)attrs];
 	
+
+	
+	
+	
+	if (openglVersion==3)
+	{
+		NSOpenGLPixelFormatAttribute attrs[] =
+		{
+			NSOpenGLPFAOpenGLProfile,
+			NSOpenGLProfileVersion3_2Core,
+			NSOpenGLPFADoubleBuffer,
+			NSOpenGLPFADepthSize, 32,
+			NSOpenGLPFAStencilSize, (NSOpenGLPixelFormatAttribute)8,
+			(NSOpenGLPixelFormatAttribute)0
+		};
+			
+		// Init GL context
+		fmt = [[NSOpenGLPixelFormat alloc] initWithAttributes: (NSOpenGLPixelFormatAttribute*)attrs];
+	} else
+	{
+		NSOpenGLPixelFormatAttribute attrs[] =
+		{
+			NSOpenGLPFADoubleBuffer,
+			NSOpenGLPFADepthSize, 32,
+			NSOpenGLPFAStencilSize, (NSOpenGLPixelFormatAttribute)8,
+			(NSOpenGLPixelFormatAttribute)0
+		};
+		// Init GL context
+		fmt = [[NSOpenGLPixelFormat alloc] initWithAttributes: (NSOpenGLPixelFormatAttribute*)attrs];
+		
+	}
 	m_context = [[NSOpenGLContext alloc] initWithFormat: fmt shareContext: nil];
 	[fmt release];
 	[m_context makeCurrentContext];
@@ -314,7 +332,7 @@ void MacOpenGLWindow::createWindow(const btgWindowConstructionInfo& ci)
 	[m_internalData->m_myview initWithFrame: frame];
     
 	// OpenGL init!
-	[m_internalData->m_myview MakeContext];
+	[m_internalData->m_myview MakeContext : ci.m_openglVersion];
 
    // https://developer.apple.com/library/mac/#documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/CapturingScreenContents/CapturingScreenContents.html#//apple_ref/doc/uid/TP40012302-CH10-SW1
     //support HighResolutionOSX for Retina Macbook
@@ -686,10 +704,13 @@ void MacOpenGLWindow::startRendering()
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     
+	GLint err = glGetError();
+    assert(err==GL_NO_ERROR);
     
     
     NSEvent *event = nil;
-    
+    bool handledEvent = false;
+	
     do
     {
         [pool release];
@@ -711,6 +732,8 @@ void MacOpenGLWindow::startRendering()
 		
 		if ([event type] == NSKeyUp)
         {
+			handledEvent = true;
+			
 			uint32 virtualKeycode = [event keyCode];
 		   
 			int keycode = getAsciiCodeFromVirtualKeycode(virtualKeycode);
@@ -724,6 +747,8 @@ void MacOpenGLWindow::startRendering()
 		}
         if ([event type] == NSKeyDown)
         {
+			handledEvent = true;
+			
 			if (![event isARepeat])
 			{
 				uint32 virtualKeycode = [event keyCode];
@@ -751,7 +776,10 @@ void MacOpenGLWindow::startRendering()
             
             // printf("mouse coord = %f, %f\n",mouseX,mouseY);
             if (m_mouseButtonCallback)
+			{
                 (*m_mouseButtonCallback)(0,0,m_mouseX,m_mouseY);
+				handledEvent = true;
+			}
             
         }
 
@@ -764,12 +792,13 @@ void MacOpenGLWindow::startRendering()
             NSPoint center = [m_internalData->m_myview convertPoint:eventLocation fromView:nil];
             m_mouseX = center.x;
             m_mouseY = [m_internalData->m_myview GetWindowHeight] - center.y;
-            shootObject = 1;
             
             // printf("mouse coord = %f, %f\n",mouseX,mouseY);
             if (m_mouseButtonCallback)
+			{
+				handledEvent = true;
                 (*m_mouseButtonCallback)(0,1,m_mouseX,m_mouseY);
-            
+            }
         }
 
         
@@ -785,8 +814,10 @@ void MacOpenGLWindow::startRendering()
 	        
            // printf("mouse coord = %f, %f\n",mouseX,mouseY);
             if (m_mouseButtonCallback)
+			{
+				handledEvent = true;
                 (*m_mouseButtonCallback)(2,1,m_mouseX,m_mouseY);
-            
+            }
         }
 		
 		
@@ -818,7 +849,10 @@ void MacOpenGLWindow::startRendering()
             
            // printf("mouse coord = %f, %f\n",m_mouseX,m_mouseY);
             if (m_mouseMoveCallback)
+			{
+				handledEvent = true;
                 (*m_mouseMoveCallback)(m_mouseX,m_mouseY);
+			}
         }
         
         if ([event type] == NSLeftMouseDragged)
@@ -833,6 +867,7 @@ void MacOpenGLWindow::startRendering()
             
             if (m_mouseMoveCallback)
             {
+				handledEvent = true;
                 (*m_mouseMoveCallback)(m_mouseX,m_mouseY);
             }
 
@@ -846,17 +881,26 @@ void MacOpenGLWindow::startRendering()
             dx = [ event deltaX ];
             
             if (m_wheelCallback)
+			{
+				handledEvent = true;
                 (*m_wheelCallback)(dx,dy);
+			}
           //  m_cameraDistance -= dy*0.1;
             // m_azi -= dx*0.1;
             
         }
-        [m_internalData->m_myApp sendEvent:event];
-        [m_internalData->m_myApp updateWindows];
+
+		if (!handledEvent)
+			[m_internalData->m_myApp sendEvent:event];
+        
+		[m_internalData->m_myApp updateWindows];
     } while (event);
   
+	err = glGetError();
+    assert(err==GL_NO_ERROR);
+    
     [m_internalData->m_myview MakeCurrent];
-    GLint err = glGetError();
+    err = glGetError();
     assert(err==GL_NO_ERROR);
     
     

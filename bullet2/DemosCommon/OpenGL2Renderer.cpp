@@ -1,5 +1,5 @@
 #include "OpenGL2Renderer.h"
-#include "../../examples/rendertest/OpenGLInclude.h"
+#include "OpenGL2Include.h"
 #include "LinearMath/btMatrix3x3.h"
 #include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
 #include "BulletDynamics/Dynamics/btRigidBody.h"
@@ -199,6 +199,10 @@ void OpenGL2Renderer::keyboardCallback(unsigned char key)
 
 void OpenGL2Renderer::init()
 	{
+		
+		GLint err = glGetError();
+		assert(err==GL_NO_ERROR);
+		
 	GLfloat light_ambient[] = { btScalar(0.2), btScalar(0.2), btScalar(0.2), btScalar(1.0) };
 	GLfloat light_diffuse[] = { btScalar(1.0), btScalar(1.0), btScalar(1.0), btScalar(1.0) };
 	GLfloat light_specular[] = { btScalar(1.0), btScalar(1.0), btScalar(1.0), btScalar(1.0 )};
@@ -226,6 +230,9 @@ void OpenGL2Renderer::init()
 	glDepthFunc(GL_LESS);
 
 	glClearColor(btScalar(0.7),btScalar(0.7),btScalar(0.7),btScalar(0));
+		err = glGetError();
+		assert(err==GL_NO_ERROR);
+		
 }
 
 
@@ -236,7 +243,7 @@ void OpenGL2Renderer::reshape(int w, int h)
 	m_openglViewportWidth = w;
 	m_openglViewportHeight = h;
 
-	glViewport(0, 0, w, h);
+	//glViewport(0, 0, w, h);
 	updateCamera();
 }
 
@@ -356,24 +363,59 @@ void OpenGL2Renderer::renderPhysicsWorld(const btDiscreteDynamicsWorld* world)
 	{			
 		if(m_enableshadows)
 		{
+			GLint err = glGetError();
+			assert(err==GL_NO_ERROR);
+			
 			glClear(GL_STENCIL_BUFFER_BIT);
 			glEnable(GL_CULL_FACE);
+
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+
 			renderscene(0,world);
+
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
 
 			glDisable(GL_LIGHTING);
 			glDepthMask(GL_FALSE);
 			glDepthFunc(GL_LEQUAL);
 			glEnable(GL_STENCIL_TEST);
 			glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+
 			glStencilFunc(GL_ALWAYS,1,0xFFFFFFFFL);
+
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+
 			glFrontFace(GL_CCW);
 			glStencilOp(GL_KEEP,GL_KEEP,GL_INCR);
+		
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+
 			renderscene(1,world);
+
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+
 			glFrontFace(GL_CW);
 			glStencilOp(GL_KEEP,GL_KEEP,GL_DECR);
+
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+
 			renderscene(1,world);
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+
 			glFrontFace(GL_CCW);
 
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+			
 			glPolygonMode(GL_FRONT,GL_FILL);
 			glPolygonMode(GL_BACK,GL_FILL);
 			glShadeModel(GL_SMOOTH);
@@ -395,6 +437,9 @@ void OpenGL2Renderer::renderPhysicsWorld(const btDiscreteDynamicsWorld* world)
 			glDepthFunc(GL_LESS);
 			glDisable(GL_STENCIL_TEST);
 			glDisable(GL_CULL_FACE);
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+			
 		}
 		else
 		{

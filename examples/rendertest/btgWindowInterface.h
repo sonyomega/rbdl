@@ -46,6 +46,7 @@ struct btgWindowConstructionInfo
 		int m_colorBitsPerPixel;
 		void* m_windowHandle;
 		const char* m_title;
+		int m_openglVersion;
 
 		btgWindowConstructionInfo(int width=1024, int height=768)
 		:m_width(width),
@@ -53,7 +54,8 @@ struct btgWindowConstructionInfo
 			m_fullscreen(false),
 			m_colorBitsPerPixel(32),
 			m_windowHandle(0),
-			m_title("title")
+			m_title("title"),
+			m_openglVersion(3)
 			{
 			}
 };

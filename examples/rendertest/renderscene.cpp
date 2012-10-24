@@ -18,7 +18,7 @@ bool keepStaticObjects = false;
 //#include "LinearMath/btQuickprof.h"
 #include "LinearMath/btQuaternion.h"
 #include "LinearMath/btMatrix3x3.h"
-#include "btConvexUtility.h"
+//#include "btConvexUtility.h"
 #include "ShapeData.h"
 ///work-in-progress 
 ///This ReadBulletSample is kept as simple as possible without dependencies to the Bullet SDK.
@@ -102,7 +102,7 @@ static btVector3	sUnitSpherePoints[MY_UNITSPHERE_POINTS] =
 	btVector3(btScalar(-0.425323) , btScalar(0.309011),btScalar(0.850654)),
 	btVector3(btScalar(0.162456) , btScalar(0.499995),btScalar(0.850654))
 };
-
+#if 0
 GraphicsShape* createGraphicsShapeFromConvexHull(const btVector3* tmpPoints, int numPoints)
 {
 	btConvexUtility* utilPtr = new btConvexUtility();
@@ -168,6 +168,7 @@ GraphicsShape* createGraphicsShapeFromConvexHull(const btVector3* tmpPoints, int
 			return gfxShape;
 	}
 }
+#endif
 
 void createSceneProgrammatically(GLInstancingRenderer& renderer)
 {

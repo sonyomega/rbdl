@@ -23,9 +23,6 @@ void MyKeyboardCallback(int key, int state)
 	}
 }
 
-#include <Windows.h>
-
-#include "GL/gl.h"
 
 int main(int argc, char* argv[])
 {
@@ -37,27 +34,23 @@ int main(int argc, char* argv[])
 	Win32OpenGLWindow* window = new Win32OpenGLWindow();
 #endif
 	btgWindowConstructionInfo wci(g_OpenGLWidth,g_OpenGLHeight);
-	
+	wci.m_openglVersion = 2;	
 	window->createWindow(wci);
 	window->setWindowTitle("MyTest");
+#ifdef _WIN32
 	glewInit();
+#endif
 
+    
 	window->startRendering();
-	glFinish();
-	glClearColor(1,0,0,1);
-	glClear(GL_COLOR_BUFFER_BIT);
-//	GLPrimitiveRenderer prim(g_OpenGLWidth,g_OpenGLHeight);
 	float color[4] = {1,1,1,1};
 //	prim.drawRect(0,0,200,200,color);
-	window->endRendering();
-	glFinish();
-
-	glClearColor(0,1,0,1);
-	glClear(GL_COLOR_BUFFER_BIT);
+	
+    
 	
 	window->endRendering();
-	glFinish();
 
+    
 	
 	window->setKeyboardCallback(MyKeyboardCallback);
 
@@ -66,19 +59,15 @@ int main(int argc, char* argv[])
 		BasicDemo* demo = new BasicDemo;
 		demo->myinit();
 		demo->initPhysics();
+		
 		do
 		{
 			window->startRendering();
-			glClearColor(0,1,0,1);
-			glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
-			glEnable(GL_DEPTH_TEST);
 			demo->clientMoveAndDisplay();
 
 			render.init();
-			render.reshape(g_OpenGLWidth,g_OpenGLHeight);
 			render.renderPhysicsWorld(demo->getDynamicsWorld());
 			window->endRendering();
-			glFinish();
 		} while (!window->requestedExit());
 
 		demo->exitPhysics();

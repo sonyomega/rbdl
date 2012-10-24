@@ -34,12 +34,22 @@
 				"../../DemosCommon/OpenGL2Renderer.h",
 				"../../../examples/rendertest/GLPrimitiveRenderer.cpp",
 				"../../../examples/rendertest/GLPrimitiveRenderer.h",
-				"../../../examples/rendertest/Win32OpenGLWindow.cpp",
-				"../../../examples/rendertest/Win32OpenGLWindow.h",
-				"../../../examples/rendertest/Win32Window.cpp",
-				"../../../examples/rendertest/Win32Window.h",
 				"../../../examples/rendertest/LoadShader.cpp",
 				"../../../examples/rendertest/LoadShader.h",
 												
 		}
-
+		if os.is("Windows") then
+			files {
+                             "../../../examples/rendertest/Win32OpenGLWindow.cpp",
+                               "../../../examples/rendertest/Win32OpenGLWindow.h",
+                               "../../../examples/rendertest/Win32Window.cpp",
+                               "../../../examples/rendertest/Win32Window.h",   
+			}
+		end
+		if os.is("macosx") then
+			links { "Cocoa.framework" }
+			files {
+				"../../../examples/rendertest/Apple/MacOpenGLWindow.mm",
+				 "../../../examples/rendertest/Apple/MacOpenGLWindow.h",	
+			}
+		end

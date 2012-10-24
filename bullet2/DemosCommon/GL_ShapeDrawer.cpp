@@ -19,7 +19,7 @@ subject to the following restrictions:
 //#include "GLDebugFont.h"
 
 
-#include "../../examples/rendertest/OpenGLInclude.h"
+#include "OpenGL2Include.h"
 //#include "GlutStuff.h"
 #include "GL_ShapeDrawer.h"
 #include "BulletCollision/CollisionShapes/btPolyhedralConvexShape.h"
@@ -403,7 +403,10 @@ inline void glDrawVector(const btVector3& v) { glVertex3d(v[0], v[1], v[2]); }
 
 void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, const btVector3& color,int	debugMode,const btVector3& worldBoundsMin,const btVector3& worldBoundsMax)
 {
-	
+
+	GLuint err = glGetError();
+	assert(err==GL_NO_ERROR);
+
 	if (shape->getShapeType() == CUSTOM_CONVEX_SHAPE_TYPE)
 	{
 		btVector3 org(m[12], m[13], m[14]);
@@ -517,14 +520,33 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 				}
 			}
 
+			GLuint err = glGetError();
+			assert(err==GL_NO_ERROR);
+
+			
 			glGenTextures(1,(GLuint*)&m_texturehandle);
 			glBindTexture(GL_TEXTURE_2D,m_texturehandle);
+
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+
 			glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
-			gluBuild2DMipmaps(GL_TEXTURE_2D,3,256,256,GL_RGB,GL_UNSIGNED_BYTE,image);
+	//		glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+
+	//		glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+//			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+//			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+
+			glGenerateMipmap(GL_TEXTURE_2D);
+//			gluBuild2DMipmaps(GL_TEXTURE_2D,3,256,256,GL_RGB,GL_UNSIGNED_BYTE,image);
+			err = glGetError();
+			assert(err==GL_NO_ERROR);
+
+			
 			delete[] image;
 	
 			
@@ -562,6 +584,9 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 		{
 			glDisable(GL_TEXTURE_2D);
 		}
+
+		GLuint err = glGetError();
+		assert(err==GL_NO_ERROR);
 
 
 		glColor3f(color.x(),color.y(), color.z());		
