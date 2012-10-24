@@ -201,7 +201,7 @@ void OpenGL2Renderer::init()
 	{
 		
 		GLint err = glGetError();
-		assert(err==GL_NO_ERROR);
+		btAssert(err==GL_NO_ERROR);
 		
 	GLfloat light_ambient[] = { btScalar(0.2), btScalar(0.2), btScalar(0.2), btScalar(1.0) };
 	GLfloat light_diffuse[] = { btScalar(1.0), btScalar(1.0), btScalar(1.0), btScalar(1.0) };
@@ -231,7 +231,7 @@ void OpenGL2Renderer::init()
 
 	glClearColor(btScalar(0.7),btScalar(0.7),btScalar(0.7),btScalar(0));
 		err = glGetError();
-		assert(err==GL_NO_ERROR);
+		btAssert(err==GL_NO_ERROR);
 		
 }
 
@@ -364,18 +364,18 @@ void OpenGL2Renderer::renderPhysicsWorld(const btDiscreteDynamicsWorld* world)
 		if(m_enableshadows)
 		{
 			GLint err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 			
 			glClear(GL_STENCIL_BUFFER_BIT);
 			glEnable(GL_CULL_FACE);
 
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 			renderscene(0,world);
 
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 			glDisable(GL_LIGHTING);
 			glDepthMask(GL_FALSE);
@@ -383,38 +383,38 @@ void OpenGL2Renderer::renderPhysicsWorld(const btDiscreteDynamicsWorld* world)
 			glEnable(GL_STENCIL_TEST);
 			glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 			glStencilFunc(GL_ALWAYS,1,0xFFFFFFFFL);
 
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 			glFrontFace(GL_CCW);
 			glStencilOp(GL_KEEP,GL_KEEP,GL_INCR);
 		
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 			renderscene(1,world);
 
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 			glFrontFace(GL_CW);
 			glStencilOp(GL_KEEP,GL_KEEP,GL_DECR);
 
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 			renderscene(1,world);
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 			glFrontFace(GL_CCW);
 
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 			
 			glPolygonMode(GL_FRONT,GL_FILL);
 			glPolygonMode(GL_BACK,GL_FILL);
@@ -438,7 +438,7 @@ void OpenGL2Renderer::renderPhysicsWorld(const btDiscreteDynamicsWorld* world)
 			glDisable(GL_STENCIL_TEST);
 			glDisable(GL_CULL_FACE);
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 			
 		}
 		else

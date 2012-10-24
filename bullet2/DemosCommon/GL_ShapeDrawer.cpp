@@ -405,7 +405,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 {
 
 	GLuint err = glGetError();
-	assert(err==GL_NO_ERROR);
+	btAssert(err==GL_NO_ERROR);
 
 	if (shape->getShapeType() == CUSTOM_CONVEX_SHAPE_TYPE)
 	{
@@ -521,30 +521,30 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 			}
 
 			GLuint err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 			
 			glGenTextures(1,(GLuint*)&m_texturehandle);
 			glBindTexture(GL_TEXTURE_2D,m_texturehandle);
 
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 			glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
 	//		glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 	//		glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 //			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
 //			glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 			glGenerateMipmap(GL_TEXTURE_2D);
 //			gluBuild2DMipmaps(GL_TEXTURE_2D,3,256,256,GL_RGB,GL_UNSIGNED_BYTE,image);
 			err = glGetError();
-			assert(err==GL_NO_ERROR);
+			btAssert(err==GL_NO_ERROR);
 
 			
 			delete[] image;
@@ -586,7 +586,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 		}
 
 		GLuint err = glGetError();
-		assert(err==GL_NO_ERROR);
+		btAssert(err==GL_NO_ERROR);
 
 
 		glColor3f(color.x(),color.y(), color.z());		

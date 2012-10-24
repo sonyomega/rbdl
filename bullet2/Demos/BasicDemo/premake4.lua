@@ -40,10 +40,10 @@
 		}
 		if os.is("Windows") then
 			files {
-                             "../../../examples/rendertest/Win32OpenGLWindow.cpp",
-                               "../../../examples/rendertest/Win32OpenGLWindow.h",
-                               "../../../examples/rendertest/Win32Window.cpp",
-                               "../../../examples/rendertest/Win32Window.h",   
+                             "../../../examples/rendertest/Windows/Win32OpenGLWindow.cpp",
+                               "../../../examples/rendertest/Windows/Win32OpenGLWindow.h",
+                               "../../../examples/rendertest/Windows/Win32Window.cpp",
+                               "../../../examples/rendertest/Windows/Win32Window.h",   
 			}
 		end
 		if os.is("macosx") then
